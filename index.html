@@ -273,7 +273,7 @@ for (i=pos; i<len; i++) {
  id+=e[i];
 }
 
-var cleanlink = "https://drive.google.com/uc?id" + id;
+var cleanlink = "https://drive.google.com/thumbnail?id" + id + "&sz=w200";
 return cleanlink;
 
 }
@@ -292,12 +292,16 @@ function displayInfo (a) {
 		var beforeImg = document.createElement("img");
 		var afterImg = document.createElement("img");
 		
-		beforeImg.className = 'rotate90'; beforeImg.src = beforeclean;
-		afterImg.className = 'rotate90'; afterImg.src = afterclean;
+		 beforeImg.className = 'imgdisplay'; 
+		beforeImg.src = beforeclean;
+		 afterImg.className = 'imgdisplay'; 
+		afterImg.src = afterclean;
 
 
-		var all = "<h4 style = 'padding-left:20px;'>" + info.Date + " | " + 
-		 info.Loc + "</h4>";
+		var all = "<div style = 'padding:20px;font-size:110%; color:'#444'>" +
+		"<b>" + info.Loc + "</b></br>" + 
+		info.Date + 
+		"</div>";
 
 		var deets = document.createElement("div");
 		deets.innerHTML = all;
