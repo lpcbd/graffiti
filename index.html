@@ -17,8 +17,8 @@
  <script src="randomColor.min.js"></script>
  <script src="spin-js/spin.js"></script>
  <script src="spin-js/jquery.spin.js"></script>
- <script src="http://maps.stamen.com/js/tile.stamen.js"></script>
- <script src = "https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"></script>
+
+
 
 
   <!-- Tabletop to access Google spreadsheets - THANK YOU AMAZING HUMANS WHO CREATED THIS!! LOVE LOVE LOVE-->
@@ -65,7 +65,7 @@ var map = L.map('mapdiv',{
   fullscreenControlOptions: {
     position: 'topleft'
   }
-} ).setView([37.7934177, -122.4211378], 16);
+} ).setView([37.7934177, -122.4211378], 17);
 
 
 
@@ -96,7 +96,6 @@ googleStr = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
 	attribution: 'uses google streets'
 });
 
- var borders = new L.GeoJSON.AJAX("polkcbds.geojson");
 
 
 // var stamenLabels = L.tileLayer('http://a.tile.stamen.com/toner-labels/{z}/{x}/{y}.png', {attribution: 'uses <a href="http://stamen.com">stamen</a> labels'});
@@ -112,13 +111,54 @@ googleStr = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
 //	e._layers[36] = googleSat;
 // 	satLabel.addLayer(stamenLabels);
 // }
- googleStr.addTo(map);
+googleStr.addTo(map);
 
 var bases = {"Streets": googleStr};
 
 overlayLayers = {}; 
 		<!-- don't forget to add any new layers to the menu! -->		
 grafOverlay={};
+
+function getColor(a) {
+	switch (a) {
+	case 'Discover Polk':
+      return '#027e9c';
+	case 'Lower Polk': 
+	  return '#FAF13A';
+    default:
+      return '#444';
+	
+	
+	}
+	
+}
+
+function style(feature) {
+		
+			return {
+					weight: 6,
+					opacity: .3,
+					color: getColor(feature.properties.name),
+					fillOpacity: 0.1,
+					fillColor: getColor(feature.properties.name),
+				};
+			}
+var cbdLayer = new L.geoJson;
+
+$.getJSON("https://discoverpolk.github.io/cbd/polkcbds.geojson",
+            function(data) {
+	        cbdLayer = L.geoJson(data, {
+				style: style,
+				interactive: false,
+				onEachFeature: function (feature, layer) {
+
+				}
+				
+			});
+			cbdLayer.addTo(map);
+			});
+
+
 
 
 
@@ -201,6 +241,7 @@ if (layerControlOn = false){
 	layerControlOn = true;
 }
 
+
 }
 
 
@@ -235,7 +276,6 @@ return cleanlink;
 
 function displayInfo (a) {
 
-		console.log(a);
 		var info = a.target.options.data;
 		var beforepic = info.Before;
 		var afterpic = info.After;
