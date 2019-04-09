@@ -32,6 +32,14 @@ button {background-color:#fff; font-family:"Helvetica"; font-size:120%; color:#4
 height:auto !important;
 }
 
+.leaflet-pane .leaflet-tile-pane {
+    -webkit-filter: grayscale(100%);
+       -moz-filter: grayscale(100%);
+        -ms-filter: grayscale(100%);
+         -o-filter: grayscale(100%);
+            filter: grayscale(100%);
+}
+
 .imgcontain {
 
 	margin-top:10px; margin-bottom:10px; width:100%;
