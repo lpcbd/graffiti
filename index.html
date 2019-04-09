@@ -8,6 +8,7 @@
 <script src="jquery/jquery-1.6.4.min.js"></script>
 
 
+
  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
    integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
    crossorigin=""/>
@@ -17,7 +18,7 @@
  <script src="randomColor.min.js"></script>
  <script src="spin-js/spin.js"></script>
  <script src="spin-js/jquery.spin.js"></script>
-
+ <script src="http://maps.stamen.com/js/tile.stamen.js"></script>
 
 
 
@@ -29,6 +30,8 @@
 <link rel="stylesheet" href="leaflet-sidebar/L.Control.Sidebar.css" />
     <script src="leaflet-sidebar/L.Control.Sidebar.js"></script>
 	<script src="button/leaflet-button.js"></script>
+
+  
   
  <!-- FontAaaawwwwesome -->  
   <script src="https://use.fontawesome.com/0a9a58d8dc.js"></script>  
@@ -82,6 +85,8 @@ var map = L.map('mapdiv',{
 
 // var stamen = L.tileLayer('http://a.tile.stamen.com/watercolor/{z}/{x}/{y}.png', {attribution: 'uses a <a href="http://stamen.com">stamen</a> basemap'});
 // var stamenstreets = L.tileLayer('http://a.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {attribution: 'uses a <a href="http://stamen.com">stamen</a> basemap'});
+// stamenstreets.addTo(map);
+
 
 
 googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
@@ -291,7 +296,7 @@ function displayInfo (a) {
 		afterImg.className = 'rotate90'; afterImg.src = afterclean;
 
 
-		var all = "<h4>" + info.Date + " | " + 
+		var all = "<h4 style = 'padding-left:20px;'>" + info.Date + " | " + 
 		 info.Loc + "</h4>";
 
 		var deets = document.createElement("div");
