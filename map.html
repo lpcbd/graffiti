@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='UTF-8'>
+<meta http-equiv="Access-Control-Allow-Origin" content="*">
+<title>working</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="jquery/jquery-1.6.4.min.js"></script>
+
+
+ <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+   integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
+   crossorigin=""/>
+ <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+   integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+   crossorigin=""></script>
+ <script src="randomColor.min.js"></script>
+ <script src="spin-js/spin.js"></script>
+ <script src="spin-js/jquery.spin.js"></script>
+ <script src="http://maps.stamen.com/js/tile.stamen.js"></script>
+ <script src = "https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"></script>
+
+
+  <!-- Tabletop to access Google spreadsheets - THANK YOU AMAZING HUMANS WHO CREATED THIS!! LOVE LOVE LOVE-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.1/tabletop.js"></script>
+  <script src="leaflet-markercluster/dist/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="leaflet-markercluster/dist/MarkerCluster.css">
+	    <link rel="stylesheet" href="leaflet-markercluster/dist/MarkerCluster.Default.css">
+<link rel="stylesheet" href="leaflet-sidebar/L.Control.Sidebar.css" />
+    <script src="leaflet-sidebar/L.Control.Sidebar.js"></script>
+	<script src="button/leaflet-button.js"></script>
+  
+ <!-- FontAaaawwwwesome -->  
+  <script src="https://use.fontawesome.com/0a9a58d8dc.js"></script>  
+ <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.0.1/leaflet-omnivore.min.js'></script>
+
+
+ <!-- FUSE - thanks, Kiro -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.0.4/fuse.min.js"></script>
+	
+<link rel="stylesheet" href="css/dp_style.css" />
+
+
+
+<style>
+		
+</style>
+
+</head>				
+	
+<body>
+
+<div id="directoryBox" style="width:100%; height:250px; display:none;"></div>
+<div id="mapdiv"></div>
+
+<script type="text/javascript">
+
+
+// General note: TABLETOP, I love you. LOVE YOU.
+
+
+var map = L.map('mapdiv',{
+  maxZoom: 20,
+  fullscreenControl: true,
+  fullscreenControlOptions: {
+    position: 'topleft'
+  }
+} ).setView([37.7934177, -122.4211378], 16);
+
+
+
+  var info_sidebar = document.createElement('div');
+  info_sidebar.id = "infoSidebar";
+  info_sidebar.class = "sidebar";
+  $('body')[0].appendChild(info_sidebar);
+  
+  infoSidebar = new L.control.sidebar('infoSidebar',{
+      position: 'right'
+  });
+	map.addControl(infoSidebar);
+
+
+// var stamen = L.tileLayer('http://a.tile.stamen.com/watercolor/{z}/{x}/{y}.png', {attribution: 'uses a <a href="http://stamen.com">stamen</a> basemap'});
+// var stamenstreets = L.tileLayer('http://a.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {attribution: 'uses a <a href="http://stamen.com">stamen</a> basemap'});
+
+
+googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+	maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3'],
+	attribution: 'uses google satellite'
+});
+
+googleStr = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
+	maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3'],
+	attribution: 'uses google streets'
+});
+
+ var borders = new L.GeoJSON.AJAX("polkcbds.geojson");
+
+
+// var stamenLabels = L.tileLayer('http://a.tile.stamen.com/toner-labels/{z}/{x}/{y}.png', {attribution: 'uses <a href="http://stamen.com">stamen</a> labels'});
+
+// var waterStreet = new L.layerGroup();
+// waterStreet.addLayer(stamen)
+// waterStreet.addLayer(stamenLabels);
+
+// var satLabel = new L.layerGroup();
+// makeSatLabels(satLabel);
+
+// function makeSatLabels(e) {
+//	e._layers[36] = googleSat;
+// 	satLabel.addLayer(stamenLabels);
+// }
+ googleStr.addTo(map);
+
+var bases = {"Streets": googleStr};
+
+overlayLayers = {}; 
+		<!-- don't forget to add any new layers to the menu! -->		
+grafOverlay={};
+
+
+
+var infoSidebarOn = false;
+var layerControlOn = false;
+var data = [];	
+
+loadGraf();
+
+  
+var points = [];
+
+
+function displayGraf(data) {
+
+	var graffiti = new L.markerClusterGroup();
+	for (i=0;i<=data.length-1;i++) {
+		if ((data[i].Lat !='#N/A') && (data[i].Lat !='#REF!')) {
+			var lat = data[i].Lat;
+			var lng = data[i].Lng;
+			var latlng = [lat,lng];
+			var atype = data[i].a_type;
+			grafMarker = L.CircleMarker.extend({
+				options:{
+					data: []
+				}
+			});
+			
+			if ((latlng != null)&&(lat != 'Loading...') && (lat != '#N/A')) {
+			var marker = new grafMarker(latlng, {
+				radius: 10,
+				weight:2,
+				color:"#fff",
+				opacity:.7,
+				fillOpacity: 0.7,
+				fillColor:"#FC02A9",
+				data: data[i]
+				});
+				
+
+			graffiti.addLayer(marker);
+
+
+
+			
+			var content = 
+					"<b>"+ data[i].Date + "</b><br>" + data[i].Loc ;
+//					"<img class = 'rotate90' src = '" + beforeclean + "'> " + "<br>" + 
+//					"<img class = 'rotate90' src = '" + beforeclean + "'> "					
+			
+
+
+
+
+			graffiti.on('clusterclick', function (a) {
+				a.layer.spiderify;
+			});
+			marker.bindTooltip(content,{'maxWidth':'300px'});
+//			if (map.hasLayer(stamen)){
+//				stamen.redraw();
+//			}
+//			if (map.hasLayer(googleSat)){
+//				googleSat.redraw();
+//			}
+//			if (map.hasLayer(stamenstreets)){
+//				stamenstreets.redraw();
+//			}
+			marker.on("click", function(e) {
+				L.DomEvent.stop(e);
+				displayInfo(e);			
+			})
+			graffiti.addTo(map);
+			}
+		}				
+				
+	overlayLayers["graffiti"] = graffiti;
+	}
+if (layerControlOn = false){
+	L.control.layers(bases, overlayLayers, {position:'topleft'}).addTo(map);	
+	layerControlOn = true;
+}
+
+}
+
+
+		
+function loadGraf() {
+
+Tabletop.init({
+    	key: "https://docs.google.com/spreadsheets/d/1hOn8YeHsPdJYP3Fc50hybnEg5Wem3Qf2LsH8fKEpqnw/edit?usp=sharing",
+    	callback: displayGraf,
+    	simpleSheet: true,
+    	debug: false
+    });
+	
+}			
+			
+
+
+function cleanlink(e) {
+
+var len = e.length;
+var pos = e.indexOf("=");
+var id = [];
+for (i=pos; i<len; i++) {
+ id+=e[i];
+}
+
+var cleanlink = "https://drive.google.com/uc?id" + id;
+return cleanlink;
+
+}
+
+
+function displayInfo (a) {
+
+		console.log(a);
+		var info = a.target.options.data;
+		var beforepic = info.Before;
+		var afterpic = info.After;
+		
+		var beforeclean = cleanlink(beforepic);
+		
+		var afterclean = cleanlink(afterpic);
+		
+		var beforeImg = document.createElement("img");
+		var afterImg = document.createElement("img");
+		
+		beforeImg.className = 'rotate90'; beforeImg.src = beforeclean;
+		afterImg.className = 'rotate90'; afterImg.src = afterclean;
+
+
+		var all = "<h4>" + info.Date + " | " + 
+		 info.Loc + "</h4>";
+
+		var deets = document.createElement("div");
+		deets.innerHTML = all;
+		deets.style = "width:90%; float:left; z-index:999";
+		deets.appendChild(beforeImg);
+		deets.appendChild(afterImg);
+
+
+			var infoDisplay = 
+			 "<i class='fa fa-times fa-lg' style='float:right' onClick='infoSidebar.toggle();infoSidebarOn=false;' ></i>";						
+				infoSidebar.setContent(infoDisplay);
+				infoSidebar._contentContainer.appendChild(deets);
+
+
+
+				if (infoSidebarOn == false) {
+					infoSidebar.show();
+					infoSidebarOn = true;
+				}
+
+}
+			
+
+	
+</script> 
+  
+
+</body>
+</html>
