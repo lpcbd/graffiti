@@ -16,14 +16,13 @@
    integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
    crossorigin=""></script>
  <script src="randomColor.min.js"></script>
- <script src="spin-js/spin.js"></script>
- <script src="spin-js/jquery.spin.js"></script>
- <script src="http://maps.stamen.com/js/tile.stamen.js"></script>
 
 
 
   <!-- Tabletop to access Google spreadsheets - THANK YOU AMAZING HUMANS WHO CREATED THIS!! LOVE LOVE LOVE-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.1/tabletop.js"></script>
+  
+  <!-- Marker clustering and sidebar -->  
   <script src="leaflet-markercluster/dist/leaflet.markercluster.js"></script>
     <link rel="stylesheet" href="leaflet-markercluster/dist/MarkerCluster.css">
 	    <link rel="stylesheet" href="leaflet-markercluster/dist/MarkerCluster.Default.css">
@@ -82,12 +81,6 @@ var map = L.map('mapdiv',{
 	map.addControl(infoSidebar);
 
 
-// var stamen = L.tileLayer('http://a.tile.stamen.com/watercolor/{z}/{x}/{y}.png', {attribution: 'uses a <a href="http://stamen.com">stamen</a> basemap'});
-// var stamenstreets = L.tileLayer('http://a.tile.stamen.com/toner-lite/{z}/{x}/{y}.png', {attribution: 'uses a <a href="http://stamen.com">stamen</a> basemap'});
-// stamenstreets.addTo(map);
-
-
-
 googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
 	maxZoom: 20,
     subdomains:['mt0','mt1','mt2','mt3'],
@@ -100,21 +93,6 @@ googleStr = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
 	attribution: 'uses google streets'
 });
 
-
-
-// var stamenLabels = L.tileLayer('http://a.tile.stamen.com/toner-labels/{z}/{x}/{y}.png', {attribution: 'uses <a href="http://stamen.com">stamen</a> labels'});
-
-// var waterStreet = new L.layerGroup();
-// waterStreet.addLayer(stamen)
-// waterStreet.addLayer(stamenLabels);
-
-// var satLabel = new L.layerGroup();
-// makeSatLabels(satLabel);
-
-// function makeSatLabels(e) {
-//	e._layers[36] = googleSat;
-// 	satLabel.addLayer(stamenLabels);
-// }
 googleStr.addTo(map);
 
 var bases = {"Streets": googleStr};
@@ -330,3 +308,4 @@ function displayInfo (a) {
 
 </body>
 </html>
+
