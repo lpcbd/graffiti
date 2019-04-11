@@ -103,6 +103,139 @@ var bases = {"Streets": googleStr};
 overlayLayers = {}; 
 		<!-- don't forget to add any new layers to the menu! -->		
 grafOverlay={};
+var monthStatViewOn = 0;
+var monthSelectorOn = 0;
+
+var monthStats = {
+	"monthnum":[],
+	"month": ["","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+	"DP":[],
+	"LP":[],
+	"total":[]
+};
+
+
+<!-- the calendar icon -->
+var monthControl = L.Control.extend({
+ 
+  options: {
+    position: 'topleft' 
+  },
+ 
+  onAdd: function (map) {
+    var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+ 
+	container.style.backgroundColor = 'white';
+    container.style.width = '30px';
+    container.style.height = '30px';
+	container.style.backgroundImage = "url(calendar.png)";
+	container.style.backgroundRepeat = "no-repeat";
+	container.style.backgroundPosition = "2px 2px";
+
+    container.onclick = function(){
+	
+	  if (monthSelectorOn != 1) {
+		document.getElementById('monthSelector').style.display = 'block';
+		monthSelectorOn = 1;
+	  }
+	
+	  if (monthStatViewOn != 1) {
+ //     map.addControl(new monthStatView());
+	  }
+    }
+
+    return container;
+  },
+ 
+});
+
+var monthStatContent;
+
+var selectorContent = '';
+var monthStatView = L.Control.extend({
+ 
+  options: {
+    position: 'bottomright' 
+  },
+ 
+  onAdd: function (map) {
+    var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+ 
+    container.style.backgroundColor = 'white';
+    container.style.width = '150px';
+    container.style.height = 'auto';
+	container.style.padding = '8px';
+	
+	monthStatViewOn = 1;
+ 
+    container.onclick = function(){
+    }
+	
+
+	container.appendChild(setupMonthStats());
+    return container;
+  },
+ 
+});
+
+var monthSelector = L.Control.extend({
+ 
+  options: {
+    position: 'topleft' 
+  },
+ 
+  onAdd: function (map) {
+    var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+		container.innerHTML = "<i class='fa fa-times fa-lg' style='float:right;color:#666;' onClick='hideMonthSelector();monthSelectorOn = 0;' ></i><h4 style='margin-top:-3px;color:#666;'>Filters</h4>" ;
+	container.id = 'monthSelector';
+	container.style.display='none';
+    container.style.backgroundColor = 'white';
+    container.style.width = '80px';
+    container.style.height = 'auto';
+	container.style.padding = '10px';
+ 
+    container.onclick = function(){
+      
+    }
+	
+    return container;
+  },
+ 
+});
+	
+
+
+
+map.addControl(new monthControl());
+map.addControl(new monthSelector());
+
+function hideMonthSelector() {
+	document.getElementById('monthSelector').style.display = 'none';
+}
+
+
+
+
+function setupMonthSelector(){
+ for (i=0; i<=13; i++) {
+	if (monthStats.total[i] > 0) {
+		document.getElementById('monthSelector').innerHTML += "<input type = 'checkbox' name = 'monthslist' value = '" + monthStats.monthnum[i]+ "' checked onchange = 'filterData()'>" + monthStats.month[i] + "</input><br>";
+	}
+ }
+}
+
+function setupMonthStats() {
+
+	var statsTable = document.createElement("table");
+	statsTable.innerHTML += "<tr><td>Month</td><td>DP</td><td>LP</td><td>All</td>";
+	for (i=3; i<=maxMonth; i++) {
+		statsTable.innerHTML += "<tr><td>" + monthStats.month[i] + "</td><td>" + monthStats.DP[i] + "</td><td>" + monthStats.LP[i] + "</td><td>" + monthStats.total[i] + "</td></tr>";
+	
+	}
+
+	return statsTable;
+
+}
 
 function getColor(a) {
 	switch (a) {
@@ -116,6 +249,53 @@ function getColor(a) {
 	
 	}
 	
+}
+
+var count = 0;
+var maxMonth = 0;
+
+
+
+function disaggregate(e){
+
+	displayGraf(e);
+	maxMonth = 0;
+	count = 0;
+	
+	for (i=0; i<=12; i++) {
+		monthStats.monthnum.push(i);
+		monthStats.total[i] = 0;
+		monthStats.DP[i]=0;
+		monthStats.LP[i]=0;
+	}
+	
+	
+	for (i=0;i<=e.length-1;i++){
+	
+		if (e[i].Month > 0) {
+			p = e[i].Month;
+		
+			monthStats.total[p]=monthStats.total[p]+1;
+			
+			if (e[i].Month > maxMonth) {
+				maxMonth = e[i].Month;
+			}
+			
+			if (e[i].District == 'Lower Polk') {
+				monthStats.LP[p] +=1;
+			}
+
+			if (e[i].District == 'Discover Polk') {
+				monthStats.DP[p] +=1;
+			}			
+			
+			count+=1;
+		
+		}
+	}
+	setupMonthSelector();
+
+
 }
 
 function style(feature) {
@@ -151,15 +331,45 @@ var infoSidebarOn = false;
 var layerControlOn = false;
 var data = [];	
 
-loadGraf();
+initGraf();
 
-  
+var monthfilters = [];  
 var points = [];
+var alldata;
 
+function loadGraf(data) {
+	
+	disaggregate(data);
+	alldata = data;
+	filterData();
+
+}
+
+function filterData() {
+	var filterdata = [];
+	monthfilters = [];
+	$.each($("input[name='monthslist']:checked"), function(){            
+                monthfilters.push($(this).val());
+            });
+	
+	$.each(monthfilters, function (i,l) {
+	$.each(alldata, function( k, v ) {
+	  if (v.Month == l) {
+		filterdata.push(alldata[k]);
+	  };
+	});
+	});
+	displayGraf(filterdata);
+
+}
+
+
+var graffiti = new L.markerClusterGroup();
 
 function displayGraf(data) {
 
-	var graffiti = new L.markerClusterGroup();
+	graffiti.clearLayers();
+
 	for (i=0;i<=data.length-1;i++) {
 		if ((data[i].Lat !='#N/A') && (data[i].Lat !='#REF!')) {
 			var lat = data[i].Lat;
@@ -191,26 +401,19 @@ function displayGraf(data) {
 			
 			var content = 
 					"<b>"+ data[i].Date + "</b><br>" + data[i].Loc ;
-//					"<img class = 'rotate90' src = '" + beforeclean + "'> " + "<br>" + 
-//					"<img class = 'rotate90' src = '" + beforeclean + "'> "					
-			
-
-
 
 
 			graffiti.on('clusterclick', function (a) {
 				a.layer.spiderify;
 			});
 			marker.bindTooltip(content,{'maxWidth':'300px'});
-//			if (map.hasLayer(stamen)){
-//				stamen.redraw();
-//			}
-//			if (map.hasLayer(googleSat)){
-//				googleSat.redraw();
-//			}
-//			if (map.hasLayer(stamenstreets)){
-//				stamenstreets.redraw();
-//			}
+			
+
+			if (map.hasLayer(googleStr)){
+				googleStr.redraw();
+			}
+
+
 			marker.on("click", function(e) {
 				L.DomEvent.stop(e);
 				displayInfo(e);			
@@ -227,18 +430,21 @@ if (layerControlOn = false){
 }
 
 
+
 }
 
 
 		
-function loadGraf() {
+function initGraf() {
 
 Tabletop.init({
     	key: "https://docs.google.com/spreadsheets/d/1hOn8YeHsPdJYP3Fc50hybnEg5Wem3Qf2LsH8fKEpqnw/edit?usp=sharing",
-    	callback: displayGraf,
+    	callback: loadGraf,
     	simpleSheet: true,
     	debug: false
     });
+	
+
 	
 }			
 			
@@ -259,7 +465,10 @@ return cleanlink;
 }
 
 
+
 function displayInfo (a) {
+
+
 
 		var info = a.target.options.data;
 		var beforepic = info.Before;
@@ -280,7 +489,8 @@ function displayInfo (a) {
 
 		var all = "<div style = 'padding:20px;font-size:110%; color:'#444'>" +
 		"<b>" + info.Loc + "</b></br>" + 
-		info.Date + 
+		info.Date + "<br><hr>" + 
+		info.Description + 
 		"</div>";
 
 		var deets = document.createElement("div");
@@ -301,6 +511,7 @@ function displayInfo (a) {
 					infoSidebar.show();
 					infoSidebarOn = true;
 				}
+		
 
 }
 			
@@ -311,4 +522,3 @@ function displayInfo (a) {
 
 </body>
 </html>
-
