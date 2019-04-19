@@ -186,7 +186,7 @@ var monthSelector = L.Control.extend({
  
   onAdd: function (map) {
     var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-		container.innerHTML = "<i class='fa fa-times fa-lg' style='float:right;color:#666;' onClick='hideMonthSelector();monthSelectorOn = 0;' ></i><h4 style='margin-top:-3px;color:#666;'>Filters</h4>" ;
+		container.innerHTML = "<i class='fa fa-times-circle fa-3x' style='float:right;color:#027e96; line-height:.5em;' onClick='hideMonthSelector();monthSelectorOn = 0;' ></i><h4 style='margin-top:-3px;color:#666;'>Filters</h4>" ;
 	container.id = 'monthSelector';
 	container.style.display='none';
     container.style.backgroundColor = 'white';
@@ -364,7 +364,7 @@ function filterData() {
 }
 
 
-var graffiti = new L.markerClusterGroup();
+var graffiti = new L.markerClusterGroup({spiderfyDistanceMultiplier:2});
 
 function displayGraf(data) {
 
@@ -473,6 +473,7 @@ function displayInfo (a) {
 		var info = a.target.options.data;
 		var beforepic = info.Before;
 		var afterpic = info.After;
+		console.log(beforepic, afterpic);
 		
 		var beforeclean = cleanlink(beforepic);
 		
@@ -501,7 +502,7 @@ function displayInfo (a) {
 
 
 			var infoDisplay = 
-			 "<i class='fa fa-times fa-lg' style='float:right' onClick='infoSidebar.toggle();infoSidebarOn=false;' ></i>";						
+			 "<i class='fa fa-times-circle fa-3x' style='float:right;color:#027e9c;line-height:.5em;' onClick='infoSidebar.toggle();infoSidebarOn=false;' ></i>";						
 				infoSidebar.setContent(infoDisplay);
 				infoSidebar._contentContainer.appendChild(deets);
 
