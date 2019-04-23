@@ -186,7 +186,7 @@ var monthSelector = L.Control.extend({
  
   onAdd: function (map) {
     var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-		container.innerHTML = "<i class='fa fa-times-circle fa-3x' style='float:right;color:#027e96; line-height:.5em;' onClick='hideMonthSelector();monthSelectorOn = 0;' ></i><h4 style='margin-top:-3px;color:#666;'>Filters</h4>" ;
+		container.innerHTML = "<i class='fa fa-times-circle fa-3x' style='float:right;color:#027e96; line-height:1em;' onClick='hideMonthSelector();monthSelectorOn = 0;' ></i><h4 style='margin-top:-3px;color:#666;'>Filters</h4>" ;
 	container.id = 'monthSelector';
 	container.style.display='none';
     container.style.backgroundColor = 'white';
