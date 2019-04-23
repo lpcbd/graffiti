@@ -1,21 +1,20 @@
 
 html {height:100%;}
 @font-face {
-    font-family: 'bebas_neuebold';
-    src: url('bebasneue_bold-webfont.woff2') format('woff2'),
-         url('bebasneue_bold-webfont.woff') format('woff');
+    font-family: 'Raleway';
+
     font-weight: normal;
     font-style: normal;
 
 }
 
 
-body {height: 100%; font-family:"Helvetica"; padding-left:20px;padding-right:20px;padding-top:5px;padding-bottom:5px;color:#444;overflow-y:hidden;}
-h1 {font-family:'bebas_neuebold'; font-size: 160%; color:#444; letter-spacing:.2em;}
-h2 {font-family:"bebas_neuebold", Courier, sans-serif; font-weight:normal; font-size:130%; color:#444; letter-spacing:.1em;}
-h3 {font-family:"bebas_neuebold", sans-serif; font-size:135%; letter-spacing:.1em;color:#444;}
-h4 {font-family:"bebas_neuebold", sans-serif; font-size:120%; letter-spacing:.1em;color:#444;margin-bottom:6px;}
-h5 {font-family:"bebas_neuebook", sans-serif; font-size:120%; letter-spacing:.1em;color:#444;}
+body {height: 100%; font-family:"Raleway"; padding-left:20px;padding-right:20px;padding-top:5px;padding-bottom:5px;color:#444;overflow-y:hidden;}
+h1 {font-family:'Raleway'; font-size: 160%; color:#444; letter-spacing:.2em;}
+h2 {font-family:"Raleway", Courier, sans-serif; font-weight:normal; font-size:130%; color:#444; letter-spacing:.1em;}
+h3 {font-family:"Raleway", sans-serif; font-size:135%; letter-spacing:.1em;color:#444;}
+h4 {font-family:"Raleway", sans-serif; font-size:120%; letter-spacing:.1em;color:#444;margin-bottom:6px;}
+h5 {font-family:"Raleway", sans-serif; font-size:120%; letter-spacing:.1em;color:#444;}
 
 a:link{font-weight:bold;color:#f69729;text-decoration:none;}
 a:visited{font-weight:bold;color:#f69729;text-decoration:none;}
