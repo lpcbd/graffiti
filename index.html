@@ -36,8 +36,9 @@
   
   
  <!-- FontAaaawwwwesome -->  
-  <link href="fontawesome/css/all.css" rel="stylesheet"> 
+<link href="fontawesome/css/all.css" rel="stylesheet">
  <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.0.1/leaflet-omnivore.min.js'></script>
+ <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Raleway" />	
 
 
  <!-- FUSE - thanks, Kiro -->
@@ -181,12 +182,12 @@ var monthStatView = L.Control.extend({
 var monthSelector = L.Control.extend({
  
   options: {
-    position: 'topleft' 
+    position: 'topleft'
   },
  
   onAdd: function (map) {
     var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-		container.innerHTML = "<i class='fa fa-times-circle fa-3x' style='float:right;color:#027e96; line-height:1em;' onClick='hideMonthSelector();monthSelectorOn = 0;' ></i><h4 style='margin-top:-3px;color:#666;'>Filters</h4>" ;
+		container.innerHTML = "<i class='fa fa-times-circle fa-3x' style='float:right;color:#027e96; line-height:.5em;' onClick='hideMonthSelector();monthSelectorOn = 0;' ></i><h4 style='margin-top:-3px;color:#666;'>Filters</h4>" ;
 	container.id = 'monthSelector';
 	container.style.display='none';
     container.style.backgroundColor = 'white';
@@ -523,3 +524,4 @@ function displayInfo (a) {
 
 </body>
 </html>
+
